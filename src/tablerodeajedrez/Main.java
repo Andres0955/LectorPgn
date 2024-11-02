@@ -1,0 +1,17 @@
+package tablerodeajedrez;
+
+import javax.swing.JFrame;
+import tablerodeajedrez.controlador.Control;
+import tablerodeajedrez.vista.JpInicio;
+
+public class Main {
+    
+    public static void main(String[] args) {
+      JFrame frame = new JFrame("Partida de Ajedrez");
+      Control control = new Control(frame);
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.setVisible(true);
+      frame.pack();
+    }
+    
+}

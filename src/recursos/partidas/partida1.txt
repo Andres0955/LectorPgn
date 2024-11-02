@@ -1,0 +1,13 @@
+[Event "Casual Game"]
+[Site "Spain"]
+[Date "1560.01.01"]
+[Round "-"]
+[White "Ruy López"]
+[Black "Unknown"]
+[Result "1-0"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6
+8. c3 O-O 9. h3 Nb8 10. d4 Nbd7 11. c4 Bb7 12. Nc3 c6 13. a3 Qc7 14. Bg5
+h6 15. Bh4 Re8 16. Rc1 exd4 17. Nxd4 Bf8 18. Nf5 g6 19. cxb5 axb5 20. Nd5 Nxd5
+21. exd5 Ne5 22. dxc6 Bxc6 23. Bd5 Ra6 24. Rxe5 Rxe5 25. Rxc6 Qa7 26. Rc8 gxf5
+27. Bf6 Rxd5 28. Qg4+ fxg4 29. hxg4 1-0
