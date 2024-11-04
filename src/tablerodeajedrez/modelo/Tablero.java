@@ -1,114 +1,168 @@
 package tablerodeajedrez.modelo;
 
-import java.awt.Image;
-import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class Tablero extends Piezas{
-    private HashMap<String, Point> coordenadas;
-    private ArrayList<Piezas> piezas;
-    
-    public Tablero(){
-        super(700, 700, 0, 0, "/recursos/imagenes/tableroMarron.png");
-        this.coordenadas = new HashMap<>();
-        this.piezas = new ArrayList<>();
-        cargarCoordenadas();
+public class Tablero {
+    private Piezas[][] posiciones;
+    private ArrayList<String> movimientosPgn;
+    private boolean esTurnoBlancas;
+
+    public Tablero() {
+        this.posiciones = new Piezas[8][8];
+        this.movimientosPgn = new ArrayList<>();
+        this.esTurnoBlancas = true;
+        
+        inicializarTablero();
+    }
+
+    private void inicializarTablero() {
+        posiciones[0][0] = new Torre("negra", "/recursos/imagenes/torreNegro.png", 0, 0);
+        posiciones[0][1] = new Caballo("negra", "/recursos/imagenes/caballoNegro.png", 0, 1);
+        posiciones[0][2] = new Alfil("negra", "/recursos/imagenes/alfilNegro.png", 0, 2);
+        posiciones[0][3] = new Reina("negra", "/recursos/imagenes/reinaNegro.png", 0, 3);
+        posiciones[0][4] = new Rey("negra", "/recursos/imagenes/reyNegro.png", 0, 4);
+        posiciones[0][5] = new Alfil("negra", "/recursos/imagenes/alfilNegro.png", 0, 5);
+        posiciones[0][6] = new Caballo("negra", "/recursos/imagenes/caballoNegro.png", 0, 6);
+        posiciones[0][7] = new Torre("negra", "/recursos/imagenes/torreNegro.png", 0, 7);
+
+        for (int i = 0; i < 8; i++) {
+            posiciones[1][i] = new Peon("negra", "/recursos/imagenes/peonNegro.png", 1, i);
+        }
+
+        posiciones[7][0] = new Torre("blanca", "/recursos/imagenes/torreBlanco.png", 7, 0);
+        posiciones[7][1] = new Caballo("blanca", "/recursos/imagenes/caballoBlanco.png", 7, 1);
+        posiciones[7][2] = new Alfil("blanca", "/recursos/imagenes/alfilBlanco.png", 7, 2);
+        posiciones[7][3] = new Reina("blanca", "/recursos/imagenes/reinaBlanco.png", 7, 3);
+        posiciones[7][4] = new Rey("blanca", "/recursos/imagenes/reyBlanco.png", 7, 4);
+        posiciones[7][5] = new Alfil("blanca", "/recursos/imagenes/alfilBlanco.png", 7, 5);
+        posiciones[7][6] = new Caballo("blanca", "/recursos/imagenes/caballoBlanco.png", 7, 6);
+        posiciones[7][7] = new Torre("blanca", "/recursos/imagenes/torreBlanco.png", 7, 7);
+
+        for (int i = 0; i < 8; i++) {
+            posiciones[6][i] = new Peon("blanca", "/recursos/imagenes/peonBlanco.png", 6, i);
+        }
     }
     
-    private void cargarCoordenadas(){
-        char[] letras = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
-        int posX = 45, posY = 55, tamañoCasillaX = 77, tamañoCasillaY = 75;
+    public Piezas[][] reproducirSiguienteMovimiento(){
+        String notacion = obtenerMovimientoPgn();
+        Movimiento movimiento = analizarMovimiento(notacion);
+        if(moverPieza(movimiento)){
+            esTurnoBlancas = !esTurnoBlancas;
+            return posiciones;
+        }
+        return null;
+    }
+    
+    private String obtenerMovimientoPgn(){
+        String movimiento = movimientosPgn.get(0);
+        movimientosPgn.remove(0);
         
+        return movimiento;
+    }
+    
+    private Movimiento analizarMovimiento(String notacion) {
+        char tipo = 'P'; 
+        String casillaDestino = "";
+        boolean captura = false;
+
+        // Verifica si es un enroque
+        if (notacion.equals("O-O")) {
+            return new Movimiento('K', "G1"); // Enroque corto, por ejemplo
+        } else if (notacion.equals("O-O-O")) {
+            return new Movimiento('K', "C1"); // Enroque largo, por ejemplo
+        }
+
+        // Determina la pieza en base a la primera letra
+        if (notacion.charAt(0) >= 'A' && notacion.charAt(0) <= 'Z') {
+            switch (notacion.charAt(0)) {
+                case 'K':
+                    tipo = 'K';
+                    break;
+                case 'Q':
+                    tipo = 'Q';
+                    break;
+                case 'R':
+                    tipo = 'R';
+                    break;
+                case 'B':
+                    tipo = 'B';
+                    break;
+                case 'N':
+                    tipo = 'N';
+                    break;
+                default:
+                    tipo = 'P';
+            }
+            casillaDestino = notacion.substring(1); // El resto es la casilla
+        } else {
+            casillaDestino = notacion; // Directamente si es un peón
+        }
+
+        // Verifica si hay captura en el movimiento
+        if (notacion.contains("x")) {
+            captura = true;
+            casillaDestino = casillaDestino.replace("x", ""); // Quita la 'x'
+        }
+
+        // Limpia notación de jaque o jaque mate
+        casillaDestino = casillaDestino.replace("+", "").replace("#", "");
+
+        return new Movimiento(tipo, casillaDestino, captura);
+    }
+
+    private boolean moverPieza(Movimiento movimiento) {
+        char tipoPieza = movimiento.getTipo();
+        String casillaDestino = movimiento.getCasillaDestino();
         
-        for(int fila = 0; fila < 8; fila++){
-            for(int columna = 0; columna < 8; columna++){
-                String id = "" + letras[columna] + (8 - fila); 
-                if(fila == 0 || fila == 1){
-                    posX = columna * tamañoCasillaX + 50;
-                    posY = fila * tamañoCasillaY + 60; 
-                }else if(fila == 6 || fila == 7){
-                    posX = columna * tamañoCasillaX + 50;
-                    posY = fila * tamañoCasillaY + 55; 
-                }else{
-                    posX = columna * tamañoCasillaX;
-                    posY = fila * tamañoCasillaY; 
+        int[] coordenadasDestino = convertirNotacionACoordenadas(casillaDestino);
+        int filaDestino = coordenadasDestino[0];
+        int columnaDestino = coordenadasDestino[1];
+        String color = esTurnoBlancas ? "blanca" : "negra";
+        ArrayList<Piezas> piezasEncontradas;
+
+        piezasEncontradas = buscarPiezaPorTipoYColor(tipoPieza, color);
+
+        for (Piezas pieza : piezasEncontradas) {
+            if (pieza.esMovimientoValido(filaDestino, columnaDestino)) {
+                int filaActual = pieza.getFila();
+                int columnaActual = pieza.getColumna();
+
+                posiciones[filaActual][columnaActual] = null;
+                posiciones[filaDestino][columnaDestino] = pieza;
+                pieza.setPosicion(filaDestino, columnaDestino);
+
+                return true;
+            }
+        }
+        System.out.println("Movimiento inválido para la pieza " + tipoPieza);
+        return false;
+    }
+    
+    private int[] convertirNotacionACoordenadas(String casilla) {
+        int columna = casilla.charAt(0) - 'a'; 
+        int fila = 8 - Character.getNumericValue(casilla.charAt(1)); 
+        return new int[] {fila, columna};
+    }
+    
+    private ArrayList<Piezas> buscarPiezaPorTipoYColor(char tipoPieza, String color) {
+        ArrayList<Piezas> piezasEncontradas = new ArrayList<>();
+        for (int fila = 0; fila < 8; fila++) {
+            for (int columna = 0; columna < 8; columna++) {
+                Piezas pieza = posiciones[fila][columna];
+                if(pieza != null && pieza.getTipo() == tipoPieza && pieza.getColor().equals(color)){
+                    piezasEncontradas.add(pieza);
                 }
-                  
-                coordenadas.put(id, new Point(posX, posY));
             }
         }
-        cargarPiezas();
+        return piezasEncontradas;
     }
     
-    private void cargarPiezas() {
-    // Cargar torres
-    cargarPieza("Torre", "a1", "a8", "h1", "h8");
-
-    // Cargar caballos
-    cargarPieza("Caballo", "b1", "b8", "g1", "g8");
-
-    // Cargar alfiles
-    cargarPieza("Alfil", "c1", "c8", "f1", "f8");
-
-    // Cargar reinas
-    cargarPieza("Reina", "d1", "d8");
-
-    // Cargar reyes
-    cargarPieza("Rey", "e1", "e8");
-
-    // Cargar peones
-    cargarPeones("2", "7");
-}
-
-    private void cargarPieza(String tipo, String... posiciones) {
-        for (int i=0; i < posiciones.length; i++) {
-            Piezas pieza;
-            if(i%2 == 0){
-                pieza = crearPieza(tipo, "Blanco");
-            }else{
-                pieza = crearPieza(tipo, "Negro");
-            }
-            
-            if (pieza != null) {
-                pieza.setPosicion(coordenadas.get(posiciones[i]));
-                piezas.add(pieza);
-            }
-        }
-    }
-
-    private void cargarPeones(String filaBlanca, String filaNegra) {
-        for (char col = 'a'; col <= 'h'; col++) {
-            // Peones blancos
-            Peon peonBlanco = new Peon("/recursos/imagenes/peonBlanco.png");
-            peonBlanco.setPosicion(coordenadas.get(col + filaBlanca));
-            piezas.add(peonBlanco);
-
-            // Peones negros
-            Peon peonNegro = new Peon("/recursos/imagenes/peonNegro.png");
-            peonNegro.setPosicion(coordenadas.get(col + filaNegra));
-            piezas.add(peonNegro);
-        }
-    }
-
-    private Piezas crearPieza(String tipo, String color) {
-        switch (tipo) {
-            case "Torre": 
-                return new Torre("/recursos/imagenes/torre" + color + ".png");
-            case "Caballo": 
-                return new Caballo("/recursos/imagenes/caballo" + color + ".png");
-            case "Alfil": 
-                return new Alfil("/recursos/imagenes/alfil" + color + ".png");
-            case "Reina": 
-                return new Reina("/recursos/imagenes/reina" + color + ".png");
-            case "Rey": 
-                return new Rey("/recursos/imagenes/rey" + color + ".png");
-            default: 
-                return null;
-        }
-    }
+     public Piezas[][] getPosiciones(){
+         return posiciones;
+     }
     
-    public ArrayList<Piezas> getPiezas(){
-        return piezas;
+    public void setMovimientos(ArrayList<String> movimientos){
+        this.movimientosPgn = movimientos;
     }
 }
+

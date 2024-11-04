@@ -2,7 +2,6 @@ package tablerodeajedrez;
 
 import javax.swing.JFrame;
 import tablerodeajedrez.controlador.Control;
-import tablerodeajedrez.vista.JpInicio;
 
 public class Main {
     

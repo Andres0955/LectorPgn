@@ -12,7 +12,7 @@ public class LeerArchivo {
         this.movimientos = new ArrayList<>();
     }
     
-    public void leerYcargarArchivo(String rutaArchivo) {
+    public ArrayList<String> leerYcargarArchivo(String rutaArchivo) {
         File archivo = new File(rutaArchivo);
         Scanner scanner = null;
         movimientos.clear();
@@ -31,8 +31,9 @@ public class LeerArchivo {
 
                 // Si encontramos una línea no vacía, es posible que contenga movimientos
                 if (!linea.isEmpty()) {
-                    // Separar los movimientos por espacios y agregarlos al ArrayList
-                    String[] partes = linea.split("\\s+");
+                    String movimientosSinTurno = linea.replaceAll("\\d+\\.\\s*", "");
+                    //El metod .split pertence al objeto String y perimite borrar los espacios en blancos mediante la expresion regular.
+                    String[] partes = movimientosSinTurno.split("\\s+");
                     for (String movimiento : partes) {
                         if (!movimiento.isEmpty()) {
                             movimientos.add(movimiento);
@@ -47,13 +48,15 @@ public class LeerArchivo {
             }
 
         } catch (FileNotFoundException e) {
-            System.out.println("No se encontró el archivo: " + e.getMessage());
+            System.out.println("No se encontró el archivo: " + rutaArchivo);
         } finally {
             // Cerrar el Scanner en el bloque finally para liberar recursos
             if (scanner != null) {
                 scanner.close();
             }
         }
+        
+        return movimientos;
     }
 
     public ArrayList<String> getMovimientos() {

@@ -24,6 +24,7 @@ public class Control {
         
         
         cambiarPanel("inicio");
+        cargarPartida();
     }
     
     public void cambiarPanel(String newPanel) {
@@ -45,5 +46,14 @@ public class Control {
         frame.repaint();
     }
     
+    private void cargarPartida(){
+        LeerArchivo lector = new LeerArchivo();
+        tablero.setMovimientos(lector.leerYcargarArchivo("src/recursos/partidas/partida1.txt"));
+        jpPartida.setPosiciones(tablero.getPosiciones());
+    }
+    
+    public void avanzar(){
+        jpPartida.setPosiciones(tablero.reproducirSiguienteMovimiento());
+    }
 
 }
