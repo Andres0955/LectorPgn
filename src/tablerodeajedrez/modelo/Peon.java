@@ -1,13 +1,14 @@
 package tablerodeajedrez.modelo;
 
 public class Peon extends Piezas{
-    public Peon(String color, String ruta, int fila, int columna){
-        super(color, ruta, fila, columna);
-        setTipo('P');
+    public Peon(char tipo,String color, String ruta, int fila, int columna){
+        super(tipo, color, ruta, fila, columna);
     }
     
    @Override
-   public boolean esMovimientoValido(int filaDestino, int columnaDestino) {
+   public boolean esMovimientoValido(Movimiento movimiento) {
+       int filaDestino = movimiento.getFila();
+        int columnaDestino = movimiento.getColumna();
     int direccion = getColor().equals("blanca") ? -1 : 1; // Determina la dirección según el color
     
     if (columnaDestino == getColumna()) {
@@ -22,7 +23,9 @@ public class Peon extends Piezas{
         }
     } else if (Math.abs(columnaDestino - getColumna()) == 1 && filaDestino == getFila() + direccion) {
         // Captura en diagonal
-        return true;
+        if(movimiento.esCaptura()){
+            return true;
+        } 
     }
 
     return false;

@@ -16,7 +16,6 @@ public class JpPartida extends javax.swing.JPanel {
     private Piezas[][] posiciones;
     private Map<String, Point> coordenadas;
     
-    
     public JpPartida(Control control, Tablero tablero) {
         this.control = control;
         this.posiciones = new Piezas[8][8];
@@ -85,6 +84,11 @@ public class JpPartida extends javax.swing.JPanel {
     
     private void dibujarPiezas(Graphics g){
         
+        if (posiciones == null) {
+        System.err.println("El arreglo de posiciones no ha sido inicializado.");
+        return;
+    }
+        
         for (int fila = 0; fila < DIMENSION_TABLERO; fila++) {
             for (int columna = 0; columna < DIMENSION_TABLERO; columna++) {
                 Piezas pieza = posiciones[fila][columna];
@@ -115,7 +119,7 @@ public class JpPartida extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         btnAvanzar = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnRetroceder = new javax.swing.JButton();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -134,8 +138,13 @@ public class JpPartida extends javax.swing.JPanel {
         });
         jPanel1.add(btnAvanzar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, -1, -1));
 
-        jButton3.setText("Retroceder");
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 117, -1, -1));
+        btnRetroceder.setText("Retroceder");
+        btnRetroceder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRetrocederActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnRetroceder, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 117, -1, -1));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 0, 150, 700));
     }// </editor-fold>//GEN-END:initComponents
@@ -145,11 +154,16 @@ public class JpPartida extends javax.swing.JPanel {
         actualizarPanel();
     }//GEN-LAST:event_btnAvanzarActionPerformed
 
+    private void btnRetrocederActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetrocederActionPerformed
+        control.retroceder();
+        actualizarPanel();
+    }//GEN-LAST:event_btnRetrocederActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAvanzar;
+    private javax.swing.JButton btnRetroceder;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

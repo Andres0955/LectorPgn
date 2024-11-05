@@ -50,10 +50,15 @@ public class Control {
         LeerArchivo lector = new LeerArchivo();
         tablero.setMovimientos(lector.leerYcargarArchivo("src/recursos/partidas/partida1.txt"));
         jpPartida.setPosiciones(tablero.getPosiciones());
+        
     }
     
     public void avanzar(){
         jpPartida.setPosiciones(tablero.reproducirSiguienteMovimiento());
+    }
+    
+    public void retroceder(){
+        jpPartida.setPosiciones(tablero.extraerMatriz());
     }
 
 }

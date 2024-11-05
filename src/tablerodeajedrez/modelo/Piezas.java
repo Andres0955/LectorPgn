@@ -10,25 +10,17 @@ public abstract class Piezas {
     private String color;
     private Image imagen;
     
-    public Piezas(String color, String ruta, int fila, int columna){
+    public Piezas(char tipo, String color, String ruta, int fila, int columna){
         this.ancho = 60;
         this.alto = 60;
         this.fila = fila;
         this.columna = columna;
-        this.tipo = '.';
+        this.tipo = tipo;
         this.color = color;
         this.imagen = new ImageIcon(getClass().getResource(ruta)).getImage();
     }
     
-    public Piezas(int ancho, int alto, int posX, int posY, String ruta){
-        this.ancho = ancho;
-        this.alto = alto;
-        this.fila = posX;
-        this.columna = posY;
-        this.imagen = new ImageIcon(getClass().getResource(ruta)).getImage();
-    }
-    
-    public abstract boolean esMovimientoValido(int posicionActual, int PosicionDestino);
+    public abstract boolean esMovimientoValido(Movimiento movimiento);
     
     public int getAncho(){
         return ancho;
@@ -60,10 +52,6 @@ public abstract class Piezas {
     
     public void setPosicion(int fila, int columna){
         this.fila = fila;
-        this.fila = columna;
-    }
-    
-    public void setTipo(char tipo){
-        this.tipo = tipo;
+        this.columna = columna;
     }
 }
