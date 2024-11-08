@@ -6,14 +6,18 @@ import java.util.Stack;
 public class Tablero {
     private Piezas[][] posiciones;
     private ArrayList<String> movimientosPgn;
-    private Stack<Piezas[][]> posicionesPrevias;
+    private Stack<Piezas[][]> historialPosiciones;
+    private Stack<Piezas[][]> movimientosRevertidos;
     private boolean esTurnoBlancas;
+    private boolean cambioEstado;
 
     public Tablero() {
         this.posiciones = new Piezas[8][8];
         this.movimientosPgn = new ArrayList<>();
-        this.posicionesPrevias = new Stack<>();
+        this.historialPosiciones = new Stack<>();
+        this.movimientosRevertidos = new Stack<>();
         this.esTurnoBlancas = true;
+        this.cambioEstado = false;
         
         inicializarTablero();
     }
@@ -49,13 +53,21 @@ public class Tablero {
     }
     
     public Piezas[][] reproducirSiguienteMovimiento(){
+        if(!movimientosRevertidos.isEmpty()){
+            cambioEstado = true;
+            Piezas[][] matriz = movimientosRevertidos.pop();
+            cargarNuevaMatriz(matriz);
+            return matriz;
+        }
+        
         String notacion = obtenerMovimientoPgn();
         Movimiento movimiento = analizarMovimiento(notacion);
+        cambioEstado = true;
         
         if(moverPieza(movimiento)){
             esTurnoBlancas = !esTurnoBlancas;
             cargarNuevaMatriz(posiciones);
-            System.out.println(posicionesPrevias);
+            
             return posiciones;
         }
         return null;
@@ -289,12 +301,27 @@ public class Tablero {
         this.movimientosPgn = movimientos;
     }
     
-    public void cargarNuevaMatriz(Piezas[][] nuevaMatriz){
-        posicionesPrevias.push(nuevaMatriz);
+    public void cargarNuevaMatriz(Piezas[][] matrizOriginal){
+        Piezas[][] matrizClonada = new Piezas[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                matrizClonada[i][j] = matrizOriginal[i][j]; // Copiar los valores
+            }
+        }
+        historialPosiciones.push(matrizClonada);
     }
     
     public Piezas[][] extraerMatriz(){
-        return posicionesPrevias.pop();
+        if(cambioEstado){
+            Piezas[][] quitarTope = historialPosiciones.pop();
+            movimientosRevertidos.push(quitarTope);
+        }
+        
+        Piezas[][] matrizAExtraer = historialPosiciones.pop();
+        movimientosRevertidos.push(matrizAExtraer);
+        cambioEstado = false;
+        return matrizAExtraer;
+        
     }
 }
 

@@ -16,7 +16,7 @@ public class JpPartida extends javax.swing.JPanel {
     private Piezas[][] posiciones;
     private Map<String, Point> coordenadas;
     
-    public JpPartida(Control control, Tablero tablero) {
+    public JpPartida(Control control) {
         this.control = control;
         this.posiciones = new Piezas[8][8];
         this.coordenadas = new HashMap<>();
@@ -87,7 +87,7 @@ public class JpPartida extends javax.swing.JPanel {
         if (posiciones == null) {
         System.err.println("El arreglo de posiciones no ha sido inicializado.");
         return;
-    }
+        }
         
         for (int fila = 0; fila < DIMENSION_TABLERO; fila++) {
             for (int columna = 0; columna < DIMENSION_TABLERO; columna++) {
@@ -109,6 +109,7 @@ public class JpPartida extends javax.swing.JPanel {
      
     public void setPosiciones(Piezas[][] posiciones){
         this.posiciones = posiciones;
+        
     }
 
     
@@ -117,9 +118,10 @@ public class JpPartida extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        btnReproducir = new javax.swing.JButton();
         btnAvanzar = new javax.swing.JButton();
         btnRetroceder = new javax.swing.JButton();
+        btnPausar = new javax.swing.JButton();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -127,8 +129,13 @@ public class JpPartida extends javax.swing.JPanel {
         jPanel1.setForeground(new java.awt.Color(0, 0, 0));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton1.setText("Reproducir");
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, -1, -1));
+        btnReproducir.setText("Reproducir");
+        btnReproducir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReproducirActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnReproducir, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, -1, -1));
 
         btnAvanzar.setText("Avanzar");
         btnAvanzar.addActionListener(new java.awt.event.ActionListener() {
@@ -136,7 +143,7 @@ public class JpPartida extends javax.swing.JPanel {
                 btnAvanzarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAvanzar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, -1, -1));
+        jPanel1.add(btnAvanzar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, -1, -1));
 
         btnRetroceder.setText("Retroceder");
         btnRetroceder.addActionListener(new java.awt.event.ActionListener() {
@@ -144,7 +151,15 @@ public class JpPartida extends javax.swing.JPanel {
                 btnRetrocederActionPerformed(evt);
             }
         });
-        jPanel1.add(btnRetroceder, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 117, -1, -1));
+        jPanel1.add(btnRetroceder, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 160, -1, -1));
+
+        btnPausar.setText("pausar");
+        btnPausar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPausarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnPausar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, -1, -1));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 0, 150, 700));
     }// </editor-fold>//GEN-END:initComponents
@@ -159,11 +174,20 @@ public class JpPartida extends javax.swing.JPanel {
         actualizarPanel();
     }//GEN-LAST:event_btnRetrocederActionPerformed
 
+    private void btnReproducirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReproducirActionPerformed
+        control.iniciarTemporizador();
+    }//GEN-LAST:event_btnReproducirActionPerformed
+
+    private void btnPausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausarActionPerformed
+        control.pararTemporizador();
+    }//GEN-LAST:event_btnPausarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAvanzar;
+    private javax.swing.JButton btnPausar;
+    private javax.swing.JButton btnReproducir;
     private javax.swing.JButton btnRetroceder;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

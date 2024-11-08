@@ -19,7 +19,7 @@ public class LeerArchivo {
 
         try {
             scanner = new Scanner(archivo);
-            boolean enMovimientos = false;
+            boolean hayMovimientos = false;
 
             while (scanner.hasNextLine()) {
                 String linea = scanner.nextLine().trim();
@@ -39,11 +39,11 @@ public class LeerArchivo {
                             movimientos.add(movimiento);
                         }
                     }
-                    enMovimientos = true;
+                    hayMovimientos = true;
                 }
             }
 
-            if (!enMovimientos) {
+            if (!hayMovimientos) {
                 System.out.println("No se encontraron movimientos en el archivo.");
             }
 

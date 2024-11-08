@@ -1,7 +1,10 @@
 package tablerodeajedrez.controlador;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import tablerodeajedrez.modelo.*;
 import tablerodeajedrez.vista.*;
 
@@ -13,6 +16,7 @@ public class Control {
     private JFrame frame;
     private JpInicio jpInicio;
     private Tablero tablero;
+    private Timer temporizador;
      
     
     public Control(JFrame frame){
@@ -20,7 +24,14 @@ public class Control {
         this.frame = frame;
         this.jpInicio = new JpInicio(instancia);
         this.tablero = new Tablero();
-        this.jpPartida = new JpPartida(instancia, tablero);
+        this.jpPartida = new JpPartida(instancia);
+        this.temporizador = new Timer(1000, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                avanzar();
+                jpPartida.actualizarPanel();
+            }
+        });
         
         
         cambiarPanel("inicio");
@@ -48,17 +59,29 @@ public class Control {
     
     private void cargarPartida(){
         LeerArchivo lector = new LeerArchivo();
-        tablero.setMovimientos(lector.leerYcargarArchivo("src/recursos/partidas/partida1.txt"));
+        tablero.setMovimientos(lector.leerYcargarArchivo("src/recursos/partidas/Partida famosa entre Fischer y Spassky, 1972.txt"));
         jpPartida.setPosiciones(tablero.getPosiciones());
         
     }
     
     public void avanzar(){
-        jpPartida.setPosiciones(tablero.reproducirSiguienteMovimiento());
+        Piezas[][] posiciones = tablero.reproducirSiguienteMovimiento();
+        jpPartida.setPosiciones(posiciones);
     }
     
     public void retroceder(){
-        jpPartida.setPosiciones(tablero.extraerMatriz());
+        Piezas[][] posiciones = tablero.extraerMatriz();
+        jpPartida.setPosiciones(posiciones);
+        jpPartida.repaint();
+        
+    }
+    
+    public void iniciarTemporizador(){
+        temporizador.start();
+    }
+    
+    public void pararTemporizador(){
+        temporizador.stop();
     }
 
 }

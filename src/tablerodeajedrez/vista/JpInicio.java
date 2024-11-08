@@ -1,13 +1,25 @@
 package tablerodeajedrez.vista;
 
+import java.awt.Graphics;
+import javax.swing.ImageIcon;
 import tablerodeajedrez.controlador.Control;
 
 public class JpInicio extends javax.swing.JPanel {
     private Control control;
+    private ImageIcon fondo;
     
     public JpInicio(Control control) {
         this.control = control;
+        this.fondo = new ImageIcon(getClass().getResource("/recursos/imagenes/fondo4.png"));
         initComponents();
+    }
+    
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        
+        if(fondo != null){
+            g.drawImage(fondo.getImage(), 0, 0, getWidth(), getHeight(), this);
+        }
     }
 
         @SuppressWarnings("unchecked")
