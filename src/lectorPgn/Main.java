@@ -9,6 +9,7 @@ public class Main {
       JFrame frame = new JFrame("PGNPlayer");
       Control control = new Control(frame);
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.setResizable(false);
       frame.setVisible(true);
       frame.pack();
     }
