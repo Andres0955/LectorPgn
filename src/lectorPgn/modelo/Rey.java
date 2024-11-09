@@ -1,4 +1,4 @@
-package tablerodeajedrez.modelo;
+package lectorPgn.modelo;
 
 public class Rey extends Piezas{
     public Rey(char tipo,String color, String ruta, int fila, int columna){

@@ -1,23 +1,26 @@
-package tablerodeajedrez.modelo;
+package lectorPgn.modelo;
 
 import java.util.ArrayList;
 import java.util.Stack;
+import lectorPgn.controlador.Control;
 
 public class Tablero {
+    private Control control;
     private Piezas[][] posiciones;
     private ArrayList<String> movimientosPgn;
     private Stack<Piezas[][]> historialPosiciones;
     private Stack<Piezas[][]> movimientosRevertidos;
     private boolean esTurnoBlancas;
-    private boolean cambioEstado;
+    private boolean cambiarEstado;
 
-    public Tablero() {
+    public Tablero(Control control) {
+        this.control = control;
         this.posiciones = new Piezas[8][8];
         this.movimientosPgn = new ArrayList<>();
         this.historialPosiciones = new Stack<>();
         this.movimientosRevertidos = new Stack<>();
         this.esTurnoBlancas = true;
-        this.cambioEstado = false;
+        this.cambiarEstado = false;
         
         inicializarTablero();
     }
@@ -54,7 +57,7 @@ public class Tablero {
     
     public Piezas[][] reproducirSiguienteMovimiento(){
         if(!movimientosRevertidos.isEmpty()){
-            cambioEstado = true;
+            cambiarEstado = true;
             Piezas[][] matriz = movimientosRevertidos.pop();
             cargarNuevaMatriz(matriz);
             return matriz;
@@ -62,7 +65,7 @@ public class Tablero {
         
         String notacion = obtenerMovimientoPgn();
         Movimiento movimiento = analizarMovimiento(notacion);
-        cambioEstado = true;
+        cambiarEstado = true;
         
         if(moverPieza(movimiento)){
             esTurnoBlancas = !esTurnoBlancas;
@@ -86,10 +89,12 @@ public class Tablero {
         boolean captura = false;
         boolean enroqueCortoExitoso;
         boolean enroqueLargoExitoso;
+        String infoJugada;
         
         // Verifica si es un enroque
         if (notacion.equals("O-O")){
             enroqueCortoExitoso = ejecutarEnroqueCorto();
+            control.obtenerInformacion("Kingside Castling!");
             
             if(enroqueCortoExitoso && esTurnoBlancas){
                 casillaDestino = new int[]{7, 6, -1};
@@ -99,8 +104,10 @@ public class Tablero {
                 return new Movimiento('K', casillaDestino, captura);
             }
             
+            
         } else if(notacion.equals("O-O-O")){
             enroqueLargoExitoso = ejecutarEnroqueLargo();
+            control.obtenerInformacion("Queenside Castling!");
             
             if(enroqueLargoExitoso && esTurnoBlancas){
                 casillaDestino = new int[]{7, 2, -1};
@@ -125,15 +132,29 @@ public class Tablero {
             };
             notacion = notacion.substring(1); // El resto es la casilla
         }
-
+        
         // Verifica si hay captura en el movimiento
         if (notacion.contains("x")) {
+            infoJugada = "Capture!";
             captura = true;
             notacion = notacion.replace("x", ""); // Quita la 'x'
+        }else if(notacion.contains("+")){
+            infoJugada = "Check!";
+            notacion = notacion.replace("+", "");
+        }else if(notacion.contains("#")){
+            infoJugada = "Checkmate!";
+            notacion = notacion.replace("#", "");
+        }else if(notacion.contains("1-0")){
+            infoJugada = "White Wins!";
+        }else if(notacion.contains("0-1")){
+            infoJugada = "Black wins";
+        }else if(notacion.contains("1/2-1/2")){
+                infoJugada = "Mutual Agreement";
+        }else{
+            infoJugada = "...";
         }
-
-        // Limpia notación de jaque o jaque mate
-        notacion = notacion.replace("+", "").replace("#", "");
+        
+        control.obtenerInformacion(infoJugada);
         casillaDestino = convertirNotacionACoordenadas(notacion);
 
         return new Movimiento(tipo, casillaDestino, captura);
@@ -288,9 +309,26 @@ public class Tablero {
         return piezasEncontradas;
     }
     
-     public Piezas[][] getPosiciones(){
+    public void reiniciarPartida(){
+        historialPosiciones.clear();
+        borrarPosiciones();
+        inicializarTablero();
+        movimientosRevertidos.clear();
+        esTurnoBlancas = true;
+        cambiarEstado = false;
+    }
+    
+    private void borrarPosiciones(){
+        for(int i=0; i<8; i++){
+            for(int j=0; j<8; j++){
+                posiciones[i][j] = null;
+            }
+        }
+    }
+    
+    public Piezas[][] getPosiciones(){
          return posiciones;
-     }
+    }
      
     public boolean estaOcupada(int fila, int columna){
         return posiciones[fila][columna] != null;
@@ -298,7 +336,13 @@ public class Tablero {
      
     
     public void setMovimientos(ArrayList<String> movimientos){
-        this.movimientosPgn = movimientos;
+        if(movimientosPgn.isEmpty()){
+            this.movimientosPgn = movimientos;
+        }else{
+            movimientosPgn.clear();
+            this.movimientosPgn = movimientos;
+        }
+        
     }
     
     public void cargarNuevaMatriz(Piezas[][] matrizOriginal){
@@ -312,14 +356,14 @@ public class Tablero {
     }
     
     public Piezas[][] extraerMatriz(){
-        if(cambioEstado){
+        if(cambiarEstado){
             Piezas[][] quitarTope = historialPosiciones.pop();
             movimientosRevertidos.push(quitarTope);
         }
         
         Piezas[][] matrizAExtraer = historialPosiciones.pop();
         movimientosRevertidos.push(matrizAExtraer);
-        cambioEstado = false;
+        cambiarEstado = false;
         return matrizAExtraer;
         
     }

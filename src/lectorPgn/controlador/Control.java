@@ -1,12 +1,14 @@
-package tablerodeajedrez.controlador;
+package lectorPgn.controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import tablerodeajedrez.modelo.*;
-import tablerodeajedrez.vista.*;
+import lectorPgn.modelo.*;
+import lectorPgn.utils.Sonido;
+import lectorPgn.vista.*;
 
 
 public class Control {
@@ -16,14 +18,17 @@ public class Control {
     private JFrame frame;
     private JpInicio jpInicio;
     private Tablero tablero;
+    private Sonido sonido;
     private Timer temporizador;
+    private File archivo;
      
     
     public Control(JFrame frame){
         this.instancia = this;
         this.frame = frame;
         this.jpInicio = new JpInicio(instancia);
-        this.tablero = new Tablero();
+        this.tablero = new Tablero(instancia);
+        this.sonido = new Sonido();
         this.jpPartida = new JpPartida(instancia);
         this.temporizador = new Timer(1000, new ActionListener(){
             @Override
@@ -32,14 +37,16 @@ public class Control {
                 jpPartida.actualizarPanel();
             }
         });
-        
-        
-        cambiarPanel("inicio");
-        cargarPartida();
+        this.archivo = new File("");
+        frame.add(jpInicio);
+        this.panelActual = jpInicio;
     }
     
     public void cambiarPanel(String newPanel) {
-        if (panelActual != null) {
+        if(archivo == null || archivo.getName().trim().isEmpty()){
+            jpInicio.errorAlCargarArchivo();
+            return;
+        }else if(panelActual != null) {
             frame.remove(panelActual);
         }
         
@@ -57,23 +64,36 @@ public class Control {
         frame.repaint();
     }
     
+    public void obtenerArchivo(File archivoSeleccionado){
+        this.archivo = archivoSeleccionado;
+        cargarPartida();
+    }
     private void cargarPartida(){
         LeerArchivo lector = new LeerArchivo();
-        tablero.setMovimientos(lector.leerYcargarArchivo("src/recursos/partidas/Partida famosa entre Fischer y Spassky, 1972.txt"));
+        tablero.setMovimientos(lector.leerYcargarArchivo(archivo));
         jpPartida.setPosiciones(tablero.getPosiciones());
         
     }
     
     public void avanzar(){
         Piezas[][] posiciones = tablero.reproducirSiguienteMovimiento();
+        sonido.reproducir();
         jpPartida.setPosiciones(posiciones);
+        
     }
     
     public void retroceder(){
         Piezas[][] posiciones = tablero.extraerMatriz();
         jpPartida.setPosiciones(posiciones);
-        jpPartida.repaint();
+        jpPartida.actualizarPanel();
+        sonido.reproducir();
         
+    }
+    
+    public void reiniciar(){
+        tablero.reiniciarPartida();
+        jpPartida.actualizarPanel();
+        cargarPartida();
     }
     
     public void iniciarTemporizador(){
@@ -82,6 +102,10 @@ public class Control {
     
     public void pararTemporizador(){
         temporizador.stop();
+    }
+    
+    public void obtenerInformacion(String informacion){
+        jpPartida.actualizarInformacion(informacion);
     }
 
 }

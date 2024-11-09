@@ -1,4 +1,4 @@
-package tablerodeajedrez.modelo;
+package lectorPgn.modelo;
 
 public class Reina extends Piezas{
     public Reina(char tipo,String color, String ruta, int fila, int columna){

@@ -1,7 +1,8 @@
-package tablerodeajedrez.modelo;
+package lectorPgn.modelo;
 
-public class Caballo extends Piezas{
-    public Caballo(char tipo,String color, String ruta, int fila, int columna){
+public class Alfil extends Piezas{
+    
+    public Alfil(char tipo, String color, String ruta, int fila, int columna){
         super(tipo, color, ruta, fila, columna);
     }
     
@@ -12,6 +13,6 @@ public class Caballo extends Piezas{
         
         int deltaFila = Math.abs(filaDestino - getFila());
         int deltaColumna = Math.abs(columnaDestino - getColumna());
-        return (deltaFila == 2 && deltaColumna == 1) || (deltaFila == 1 && deltaColumna == 2); // Movimiento en "L"
+        return deltaFila == deltaColumna; // Movimiento en diagonal
     }
 }

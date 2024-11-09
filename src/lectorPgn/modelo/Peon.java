@@ -1,4 +1,4 @@
-package tablerodeajedrez.modelo;
+package lectorPgn.modelo;
 
 public class Peon extends Piezas{
     public Peon(char tipo,String color, String ruta, int fila, int columna){

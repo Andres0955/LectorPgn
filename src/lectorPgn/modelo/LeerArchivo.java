@@ -1,4 +1,4 @@
-package tablerodeajedrez.modelo;
+package lectorPgn.modelo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,8 +12,7 @@ public class LeerArchivo {
         this.movimientos = new ArrayList<>();
     }
     
-    public ArrayList<String> leerYcargarArchivo(String rutaArchivo) {
-        File archivo = new File(rutaArchivo);
+    public ArrayList<String> leerYcargarArchivo(File archivo) {
         Scanner scanner = null;
         movimientos.clear();
 
@@ -48,7 +47,7 @@ public class LeerArchivo {
             }
 
         } catch (FileNotFoundException e) {
-            System.out.println("No se encontró el archivo: " + rutaArchivo);
+            System.out.println("No se encontró el archivo: " + archivo);
         } finally {
             // Cerrar el Scanner en el bloque finally para liberar recursos
             if (scanner != null) {

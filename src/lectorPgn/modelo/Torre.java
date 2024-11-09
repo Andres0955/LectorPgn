@@ -1,4 +1,4 @@
-package tablerodeajedrez.modelo;
+package lectorPgn.modelo;
 
 public class Torre extends Piezas{
     private Tablero tablero;

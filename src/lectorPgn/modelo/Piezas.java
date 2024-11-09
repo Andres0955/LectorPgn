@@ -1,4 +1,4 @@
-package tablerodeajedrez.modelo;
+package lectorPgn.modelo;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
