@@ -1,0 +1,216 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+!theme spacelab
+
+package modelo{
+    class Piezas {
+      + Piezas(char, String, String, int, int): 
+      - fila: int
+      - alto: int
+      - columna: int
+      - tipo: char
+      - imagen: Image
+      - ancho: int
+      - color: String
+      + getAncho(): int
+      + getColumna(): int
+      + getAlto(): int
+      + getTipo(): char
+      + getImagen(): Image
+      + esMovimientoValido(Movimiento): boolean
+      + getFila(): int
+      + setPosicion(int, int): void
+      + getColor(): String
+    }
+
+    class Alfil {
+      + Alfil(char, String, String, int, int): 
+      + esMovimientoValido(Movimiento): boolean
+    }
+
+    class Caballo {
+      + Caballo(char, String, String, int, int): 
+      + esMovimientoValido(Movimiento): boolean
+    }
+
+    class Peon {
+      + Peon(char, String, String, int, int): 
+      + esMovimientoValido(Movimiento): boolean
+    }
+
+    class Reina {
+      + Reina(char, String, String, int, int): 
+      + esMovimientoValido(Movimiento): boolean
+    }
+
+    class Rey {
+      + Rey(char, String, String, int, int): 
+      + esMovimientoValido(Movimiento): boolean
+    }
+
+    class Torre {
+      + Torre(char, String, String, int, int, Tablero): 
+      - tablero: Tablero
+      - caminoLibre(int, int): boolean
+      + esMovimientoValido(Movimiento): boolean
+    }
+
+    class LeerArchivo {
+      + LeerArchivo(): 
+      - movimientos: ArrayList<String>
+      + leerYcargarArchivo(File): ArrayList<String>
+      + getMovimientos(): ArrayList<String>
+    }
+
+    class Movimiento {
+      + Movimiento(char, int[], boolean): 
+      - tipo: char
+      - casillaDestino: int[]
+      - enroque: boolean
+      - captura: boolean
+      + getCasillaDestino(): int[]
+      + esCaptura(): boolean
+      + getTipo(): char
+      + getColumna(): int
+      + getFila(): int
+      + esEnroque(): boolean
+    }
+    
+    class Sonido {
+      + Sonido(): 
+      - clip: Clip
+      + reproducir(): void
+      + detener(): void
+    }
+
+    class Tablero {
+      + Tablero(Control): 
+      - posiciones: Piezas[][]
+      - movimientosPgn: ArrayList<String>
+      - control: Control
+      - cambiarEstado: boolean
+      - movimientosRevertidos: Stack<Piezas[][]>
+      - esTurnoBlancas: boolean
+      - historialPosiciones: Stack<Piezas[][]>
+      - inicializarTablero(): void
+      + extraerMatriz(): Piezas[][]
+      - ejecutarEnroqueCorto(): boolean
+      - moverPieza(Movimiento): boolean
+      + setMovimientos(ArrayList<String>): void
+      - analizarMovimiento(String): Movimiento
+      + reiniciarPartida(): void
+      - borrarPosiciones(): void
+      - convertirNotacionACoordenadas(String): int[]
+      + cargarNuevaMatriz(Piezas[][]): void
+      + reproducirSiguienteMovimiento(): Piezas[][]
+      + getPosiciones(): Piezas[][]
+      - ejecutarEnroqueLargo(): boolean
+      + estaOcupada(int, int): boolean
+      - buscarPiezaPorTipoYColor(char, String, int[]): ArrayList<Piezas>
+      - obtenerMovimientoPgn(): String
+    }
+    
+}
+
+package controlador{
+    class Control {
+        + Control(JFrame): 
+        - archivo: File
+        - instancia: Control
+        - jpPartida: JpPartida
+        - sonido: Sonido
+        - panelActual: JPanel
+        - frame: JFrame
+        - temporizador: Timer
+        - jpInicio: JpInicio
+        - tablero: Tablero
+        + obtenerArchivo(File): void
+        + obtenerInformacion(String): void
+        + retroceder(): void
+        - cargarPartida(): void
+        + reiniciar(): void
+        + pararTemporizador(): void
+        + cambiarPanel(String): void
+        + iniciarTemporizador(): void
+        + avanzar(): void
+   }
+}
+
+
+package vista{
+    class JpInicio {
+      + JpInicio(Control): 
+      - control: Control
+      - btnInicio: JButton
+      - jPanelMenu: JPanel
+      - jLabel1: JLabel
+      - btnSeleccionarArchivo: JButton
+      - fondo: ImageIcon
+      - crearFileChooser(): File
+      - btnInicioActionPerformed(ActionEvent): void
+      - btnSeleccionarArchivoActionPerformed(ActionEvent): void
+      - initComponents(): void
+      + errorAlCargarArchivo(): void
+      + paintComponent(Graphics): void
+    }
+
+    class JpPartida {
+      + JpPartida(Control): 
+      - MARGEN: int
+      - btnReproducir: JToggleButton
+      - coordenadas: Map<String, Point>
+      - btnRetroceder: JButton
+      - fondo: ImageIcon
+      - control: Control
+      - colorTablero: Color[]
+      - TAMANO_CASILLA: int
+      - DIMENSION_TABLERO: int
+      - posiciones: Piezas[][]
+      - btnReiniciar: JButton
+      - txtInformacion: JTextField
+      - jPanel1: JPanel
+      - btnAvanzar: JButton
+      - btnTema: JToggleButton
+      + setPosiciones(Piezas[][]): void
+      + dibujarTablero(Graphics): void
+      + paintComponent(Graphics): void
+      - btnReiniciarActionPerformed(ActionEvent): void
+      - btnReproducirActionPerformed(ActionEvent): void
+      + actualizarPanel(): void
+      - txtInformacionActionPerformed(ActionEvent): void
+      - dibujarPiezas(Graphics): void
+      - btnTemaActionPerformed(ActionEvent): void
+      - initComponents(): void
+      - inicializarMapaPosiciones(): void
+      - btnAvanzarActionPerformed(ActionEvent): void
+      - btnRetrocederActionPerformed(ActionEvent): void
+      + actualizarInformacion(String): void
+      - elegirColores(int): void
+    }
+}
+
+
+class Main {
+  + Main(): 
+  + main(String[]): void
+}
+
+
+Alfil        -[#000082,plain]-^  Piezas      
+Caballo      -[#000082,plain]-^  Piezas      
+Control     "1" *-[#595959,plain]-> "jpInicio\n1" JpInicio    
+Control     "1" *-[#595959,plain]-> "jpPartida\n1" JpPartida   
+Control     "1" *-[#595959,plain]-> "sonido\n1" Sonido      
+Control     "1" *-[#595959,plain]-> "tablero\n1" Tablero     
+JpInicio    "1" *-[#595959,plain]-> "control\n1" Control     
+JpPartida   "1" *-[#595959,plain]-> "control\n1" Control     
+JpPartida   "1" *-[#595959,plain]-> "posiciones\n*" Piezas      
+Peon         -[#000082,plain]-^  Piezas      
+Reina        -[#000082,plain]-^  Piezas      
+Rey          -[#000082,plain]-^  Piezas      
+Tablero     "1" *-[#595959,plain]-> "control\n1" Control     
+Tablero     "1" *-[#595959,plain]-> "posiciones\n*" Piezas      
+Torre        -[#000082,plain]-^  Piezas      
+Torre       "1" *-[#595959,plain]-> "tablero\n1" Tablero     
+@enduml
